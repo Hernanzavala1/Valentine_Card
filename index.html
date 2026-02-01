@@ -356,6 +356,7 @@
       Put your photos in the SAME folder as this index.html (or an /images folder).
     */
     const GIRLFRIEND_NAME = "Erika";
+    const nickName="dumpling";
     const YOUR_NAME = "Joe";
     const PHOTOS = ["photo1.jpg","photo2.jpg","photo3.jpg"]; // rename to your file names
     const DATE_LABEL = "Feb 14";
@@ -368,7 +369,7 @@
     document.getElementById("message").textContent = CUSTOM_MESSAGE;
     document.getElementById("fromLine").querySelector("span:last-child").textContent = `From ${YOUR_NAME}`;
     document.getElementById("signature").textContent = `Made with love — ${DATE_LABEL}`;
-    document.getElementById("yayText").textContent = `Happy Valentine’s Day, my dumpling 💖`;
+    document.getElementById("yayText").textContent = `Happy Valentine’s Day, my ${nickName} 💖`;
 
     // Gallery + lightbox
     const gallery = document.getElementById("gallery");
