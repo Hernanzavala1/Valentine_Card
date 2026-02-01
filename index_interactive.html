@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Be My Valentine? 💘</title>
+  <meta name="description" content="A playful Valentine card with photos." />
+  <style>
+    :root{
+      --bg1:#fff5f8;
+      --bg2:#ffffff;
+      --text:#1f2430;
+      --muted:rgba(31,36,48,.72);
+      --card:#ffffffcc;
+      --shadow: 0 18px 45px rgba(0,0,0,.12);
+      --radius: 22px;
+      --gap: 14px;
+      --accent:#ff3b75;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, #ffd6e2 0%, transparent 55%),
+        radial-gradient(900px 700px at 80% 20%, #ffe8a6 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:flex;
+      padding: 26px 14px;
+    }
+    .wrap{ width:100%; max-width: 980px; margin:auto; }
+    .card{
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.6);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    header{ padding: 26px 22px 18px; text-align:center; }
+    h1{
+      margin: 6px 0 10px;
+      font-size: clamp(34px, 5vw, 56px);
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin: 0 auto 2px;
+      max-width: 52ch;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(0,0,0,.06);
+      font-size: 14px;
+      color: rgba(31,36,48,.78);
+    }
+    .pill .dot{
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(255,59,117,.18);
+    }
+    .content{ padding: 0 22px 20px; }
+    .grid{
+      display:grid;
+      gap: var(--gap);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-top: 18px;
+    }
+    .tile{
+      position:relative;
+      overflow:hidden;
+      border-radius: 18px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(0,0,0,.06);
+      min-height: 270px;
+    }
+    .tile img{
+      width:100%;
+      height: 100%;
+      object-fit: cover;
+      display:block;
+      transform: scale(1.01);
+    }
+    .tile::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.26));
+      opacity:.35;
+      pointer-events:none;
+    }
+
+    .ctaArea{
+      position: relative;
+      margin: 18px 0 6px;
+      height: 120px;
+      border-radius: 18px;
+      border: 1px dashed rgba(0,0,0,.12);
+      background: rgba(255,255,255,.35);
+      overflow:hidden;
+    }
+    .ctaHint{
+      position:absolute;
+      left:14px;
+      top:12px;
+      font-size: 13px;
+      color: rgba(31,36,48,.62);
+      user-select:none;
+    }
+    .btnRow{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 12px;
+      padding: 14px;
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.85);
+      padding: 11px 16px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight: 800;
+      letter-spacing:.2px;
+      transition: transform .12s ease, filter .12s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{ filter: brightness(0.98); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btnYes{
+      border-color: rgba(255,59,117,.30);
+      box-shadow: 0 10px 24px rgba(255,59,117,.14);
+    }
+    .btnNo{
+      position:absolute; /* important: we move it around */
+      left: 56%;
+      top: 52%;
+      transform: translate(-50%,-50%);
+      touch-action: manipulation;
+    }
+
+    .footer{
+      padding: 14px 22px 20px;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(0,0,0,.06);
+      background: rgba(255,255,255,.45);
+    }
+    .sig{ font-size: 14px; color: var(--muted); }
+
+    /* Lightbox */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      background: rgba(0,0,0,.55);
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 20;
+    }
+    .modal[open]{ display:flex; }
+    .modal .box{
+      width: min(900px, 100%);
+      background: white;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+    }
+    .modal img{
+      width:100%;
+      max-height: 82vh;
+      object-fit: contain;
+      background:#000;
+      display:block;
+    }
+    .modal .bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 10px 12px;
+      background: #fff;
+    }
+    .modal .bar span{ font-size: 13px; color: rgba(31,36,48,.65); }
+
+    /* "Yes" celebration overlay */
+    .celebrate{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 30;
+      pointer-events:none;
+    }
+    .celebrate[open]{ display:flex; }
+    .celebrate .panel{
+      pointer-events:auto;
+      width: min(620px, 92vw);
+      text-align:center;
+      padding: 22px 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(0,0,0,.08);
+      box-shadow: var(--shadow);
+    }
+    .celebrate h2{ margin: 6px 0 8px; font-size: 34px; }
+    .celebrate p{ margin:0; color: var(--muted); font-size: 15px; line-height:1.5; }
+    .celebrate .closeRow{ margin-top: 14px; display:flex; justify-content:center; }
+    .celebrate .closeRow button{ pointer-events:auto; }
+
+    /* Simple confetti (CSS-only pieces placed by JS) */
+    .confetti{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index: 25;
+      pointer-events:none;
+      display:none;
+    }
+    .confetti[open]{ display:block; }
+    .confetti i{
+      position:absolute;
+      width: 10px;
+      height: 16px;
+      border-radius: 2px;
+      opacity:.95;
+      animation: fall 1.8s linear forwards;
+    }
+    @keyframes fall{
+      from{ transform: translateY(-20vh) rotate(0deg); }
+      to{ transform: translateY(110vh) rotate(720deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .btn{ transition:none; }
+      .confetti i{ animation:none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" aria-label="Valentine card">
+      <header>
+        <h1>Be my Valentine? 💘</h1>
+        <p class="subtitle" id="message"></p>
+        <div class="pill" id="fromLine" aria-label="From line">
+          <span class="dot" aria-hidden="true"></span>
+          <span></span>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="grid" id="gallery" aria-label="Photo gallery"></div>
+
+        <div class="ctaArea" id="ctaArea" aria-label="Valentine question area">
+          <div class="ctaHint" id="ctaHint">Click a button 👇</div>
+          <div class="btnRow">
+            <button class="btn btnYes" id="btnYes" type="button">Yes 💖</button>
+            <button class="btn btnNo" id="btnNo" type="button" aria-label="No (this button moves)">No 🙈</button>
+          </div>
+        </div>
+
+        <p class="subtitle" style="margin:12px 0 0" id="hint">
+          Tip: Tap a photo to enlarge ✨
+        </p>
+      </div>
+
+      <div class="footer">
+        <div class="sig" id="signature"></div>
+        <button class="btn" id="btnReset" type="button" title="Puts the No button back in the middle">Reset No</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Simple lightbox -->
+  <dialog class="modal" id="lightbox">
+    <div class="box">
+      <img id="lightboxImg" alt="Enlarged photo" />
+      <div class="bar">
+        <span id="lightboxCaption"></span>
+        <button class="btn" id="btnClose" type="button">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Celebration -->
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <dialog class="celebrate" id="celebrate">
+    <div class="panel">
+      <h2 id="yayTitle">YAY! 💘</h2>
+      <p id="yayText"></p>
+      <div class="closeRow">
+        <button class="btn btnYes" id="btnYayClose" type="button">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    /*
+      EDIT THESE 4 LINES ONLY 👇
+      Put your photos in the SAME folder as this index.html (or an /images folder).
+    */
+    const GIRLFRIEND_NAME = "Erika";
+    const YOUR_NAME = "Joe";
+    const PHOTOS = ["photo1.jpg","photo2.jpg","photo3.jpg"]; // rename to your file names
+    const DATE_LABEL = "Feb 14";
+
+    // Optional: customize the message
+    const CUSTOM_MESSAGE =
+      `${GIRLFRIEND_NAME}, you make life better just by being in it. Will you be my Valentine?`;
+
+    // Render text
+    document.getElementById("message").textContent = CUSTOM_MESSAGE;
+    document.getElementById("fromLine").querySelector("span:last-child").textContent = `From ${YOUR_NAME}`;
+    document.getElementById("signature").textContent = `Made with love — ${DATE_LABEL}`;
+    document.getElementById("yayText").textContent = `Happy Valentine’s Day, ${GIRLFRIEND_NAME} 💖`;
+
+    // Gallery + lightbox
+    const gallery = document.getElementById("gallery");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const lightboxCaption = document.getElementById("lightboxCaption");
+
+    function openLightbox(src, caption){
+      lightboxImg.src = src;
+      lightboxCaption.textContent = caption;
+      lightbox.setAttribute("open","");
+    }
+    function closeLightbox(){
+      lightbox.removeAttribute("open");
+      lightboxImg.src = "";
+    }
+
+    PHOTOS.forEach((file, idx) => {
+      const tile = document.createElement("button");
+      tile.className = "tile";
+      tile.type = "button";
+      tile.style.padding = "0";
+      tile.style.border = "none";
+      tile.style.cursor = "pointer";
+      tile.style.background = "transparent";
+
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.alt = `Photo ${idx+1}`;
+      img.src = file;
+
+      tile.appendChild(img);
+      tile.addEventListener("click", () => openLightbox(file, `Photo ${idx+1}`));
+      gallery.appendChild(tile);
+
+      // If an image fails to load, show a friendly placeholder
+      img.addEventListener("error", () => {
+        tile.disabled = true;
+        tile.style.cursor = "default";
+        tile.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:center;height:270px;padding:18px;text-align:center;">
+            <div>
+              <div style="font-weight:800;margin-bottom:6px;">Missing photo</div>
+              <div style="font-size:13px;opacity:.75;">
+                Couldn’t load <code>${file}</code><br/>
+                Make sure it’s uploaded next to <code>index.html</code>
+              </div>
+            </div>
+          </div>`;
+      });
+    });
+
+    document.getElementById("btnClose").addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
+
+    // The fun part: the "No" button jumps around
+    const ctaArea = document.getElementById("ctaArea");
+    const btnNo = document.getElementById("btnNo");
+    const btnYes = document.getElementById("btnYes");
+    const btnReset = document.getElementById("btnReset");
+    const ctaHint = document.getElementById("ctaHint");
+
+    // Track attempts
+    let noCount = 0;
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function moveNoButton(){
+      const areaRect = ctaArea.getBoundingClientRect();
+
+      // Measure button size (use offsetWidth/Height for reliability)
+      const bw = btnNo.offsetWidth || 110;
+      const bh = btnNo.offsetHeight || 44;
+
+      // Keep it inside the dashed box with padding
+      const pad = 12;
+      const minX = pad;
+      const minY = pad + 18; // leave room for hint
+      const maxX = areaRect.width - bw - pad;
+      const maxY = areaRect.height - bh - pad;
+
+      // Random position, but slightly biased to keep it playful
+      const x = clamp(Math.random() * maxX, minX, maxX);
+      const y = clamp(Math.random() * maxY, minY, maxY);
+
+      btnNo.style.left = x + "px";
+      btnNo.style.top  = y + "px";
+      btnNo.style.transform = "translate(0,0)";
+    }
+
+    function resetNoButton(){
+      btnNo.style.left = "56%";
+      btnNo.style.top = "52%";
+      btnNo.style.transform = "translate(-50%,-50%)";
+      noCount = 0;
+      ctaHint.textContent = "Click a button 👇";
+    }
+
+    // Make it move on hover/focus/tap/click
+    // Desktop: hover. Mobile: touchstart/click.
+    btnNo.addEventListener("mouseenter", () => { moveNoButton(); });
+    btnNo.addEventListener("focus", () => { moveNoButton(); });
+
+    btnNo.addEventListener("pointerdown", (e) => {
+      // Prevent "click" from happening on some mobile browsers before we move
+      e.preventDefault();
+      noCount++;
+      ctaHint.textContent = (noCount < 3)
+        ? "Nope 😄"
+        : (noCount < 6) ? "Nice try 😂" : "You HAVE to click Yes 💖";
+      moveNoButton();
+    });
+
+    // As a fallback, if click happens, also move
+    btnNo.addEventListener("click", (e) => {
+      e.preventDefault();
+      noCount++;
+      moveNoButton();
+    });
+
+    btnReset.addEventListener("click", resetNoButton);
+
+    // Celebration on Yes
+    const confetti = document.getElementById("confetti");
+    const celebrate = document.getElementById("celebrate");
+    const btnYayClose = document.getElementById("btnYayClose");
+
+    function burstConfetti(){
+      confetti.innerHTML = "";
+      confetti.setAttribute("open","");
+
+      const pieces = 70;
+      const colors = ["#ff3b75","#ffb703","#8ecae6","#06d6a0","#8338ec","#ff006e","#ffd166"];
+
+      for(let i=0;i<pieces;i++){
+        const p = document.createElement("i");
+        const left = Math.random() * 100;
+        const delay = Math.random() * 0.2;
+        const dur = 1.2 + Math.random() * 1.1;
+        const sizeW = 7 + Math.random() * 8;
+        const sizeH = 10 + Math.random() * 14;
+        p.style.left = left + "vw";
+        p.style.top = (-10 - Math.random()*20) + "vh";
+        p.style.animationDelay = delay + "s";
+        p.style.animationDuration = dur + "s";
+        p.style.width = sizeW + "px";
+        p.style.height = sizeH + "px";
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+        p.style.transform = `rotate(${Math.random()*180}deg)`;
+        confetti.appendChild(p);
+      }
+
+      // Turn off after a moment
+      setTimeout(() => confetti.removeAttribute("open"), 2200);
+    }
+
+    function openCelebrate(){
+      document.getElementById("yayTitle").textContent = `YAY! 💘`;
+      celebrate.setAttribute("open","");
+    }
+    function closeCelebrate(){
+      celebrate.removeAttribute("open");
+    }
+
+    btnYes.addEventListener("click", () => {
+      burstConfetti();
+      openCelebrate();
+      // Also disable "No" just in case :)
+      btnNo.disabled = true;
+      btnNo.style.opacity = ".55";
+      btnNo.style.cursor = "default";
+      ctaHint.textContent = "Best answer 💖";
+    });
+
+    btnYayClose.addEventListener("click", closeCelebrate);
+    celebrate.addEventListener("click", (e) => { if (e.target === celebrate) closeCelebrate(); });
+
+    // On resize, keep the no button inside
+    window.addEventListener("resize", () => {
+      // If it's been moved (transform 0,0), keep it clamped by moving again
+      if (btnNo.style.transform === "translate(0,0)") moveNoButton();
+    });
+  </script>
+</body>
+</html>
